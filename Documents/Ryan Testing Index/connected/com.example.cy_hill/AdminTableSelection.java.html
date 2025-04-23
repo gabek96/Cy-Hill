@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminTableSelection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">AdminTableSelection.java</span></div><h1>AdminTableSelection.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.ui.AppBarConfiguration;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
+
+<span class="nc" id="L13">public class AdminTableSelection extends AppCompatActivity {</span>
+
+    private Button playerInfoButton;
+    private Button playerStatsButton;
+    private Button hillStatsButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L21">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L22">        setContentView(R.layout.activity_admin_table_selection);</span>
+
+<span class="nc" id="L24">        playerInfoButton = findViewById(R.id.button);</span>
+<span class="nc" id="L25">        playerStatsButton = findViewById(R.id.button2);</span>
+<span class="nc" id="L26">        hillStatsButton = findViewById(R.id.button3);</span>
+
+
+<span class="nc" id="L29">        CmdConvert cmdConvert = new CmdConvert(&quot;player_info&quot;);</span>
+<span class="nc" id="L30">        String[] modes = {&quot;player_info&quot;, &quot;player_stats&quot;, &quot;hill_stats&quot;};</span>
+<span class="nc" id="L31">        Log.d(&quot;----&quot;,&quot;---------------------------------------&quot;);</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        for(int i=0;i&lt; modes.length;i++){</span>
+<span class="nc" id="L33">            cmdConvert = new CmdConvert(modes[i]);</span>
+
+<span class="nc" id="L35">            Log.d(&quot;LIST TEST&quot;,modes[i] + &quot;-LIST-&quot; + cmdConvert.getCmd(&quot;LIST&quot;));</span>
+<span class="nc" id="L36">            Log.d(&quot;POST TEST&quot;,modes[i] + &quot;-POST-&quot; + cmdConvert.getCmd(&quot;POST&quot;));</span>
+<span class="nc" id="L37">            Log.d(&quot;GET TEST&quot;,modes[i] + &quot;-GET-&quot; + cmdConvert.getCmd((&quot;GET&quot;),1));</span>
+<span class="nc" id="L38">            Log.d(&quot;PUT TEST&quot;,modes[i] + &quot;-PUT-&quot; + cmdConvert.getCmd((&quot;PUT&quot;),1));</span>
+<span class="nc" id="L39">            Log.d(&quot;DEL TEST&quot;,modes[i] + &quot;-DEL-&quot; + cmdConvert.getCmd((&quot;DEL&quot;),1));</span>
+<span class="nc" id="L40">            Log.d(&quot;----&quot;,&quot;---------------------------------------&quot;);</span>
+        }
+
+
+<span class="nc" id="L44">        playerInfoButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L47">                Intent intent = new Intent(AdminTableSelection.this, PlayerInfo.class);</span>
+<span class="nc" id="L48">                intent.putExtra(&quot;mode&quot;,&quot;player_info&quot;);</span>
+<span class="nc" id="L49">                startActivity(intent);</span>
+<span class="nc" id="L50">                finish();</span>
+<span class="nc" id="L51">            }</span>
+        });
+
+<span class="nc" id="L54">        playerStatsButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L57">                Intent intent = new Intent(AdminTableSelection.this, PlayerInfo.class);</span>
+<span class="nc" id="L58">                intent.putExtra(&quot;mode&quot;,&quot;player_stats&quot;);</span>
+<span class="nc" id="L59">                startActivity(intent);</span>
+<span class="nc" id="L60">                finish();</span>
+<span class="nc" id="L61">            }</span>
+        });
+
+<span class="nc" id="L64">        hillStatsButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L67">                Intent intent = new Intent(AdminTableSelection.this, PlayerInfo.class);</span>
+<span class="nc" id="L68">                intent.putExtra(&quot;mode&quot;,&quot;hill_stats&quot;);</span>
+<span class="nc" id="L69">                startActivity(intent);</span>
+<span class="nc" id="L70">                finish();</span>
+<span class="nc" id="L71">            }</span>
+        });
+<span class="nc" id="L73">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">PlayerInfo.java</span></div><h1>PlayerInfo.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="nc" id="L33">public class PlayerInfo extends AppCompatActivity {</span>
+
+    private ListView listView;
+    private ArrayAdapter&lt;String&gt; adapter; // Correct adapter type for strings
+    private TextView output;
+    private FloatingActionButton newInfoButton;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+<span class="nc" id="L45">        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {</span>
+            @Override
+            public void handleOnBackPressed() {
+<span class="nc" id="L48">                Intent intent = new Intent(PlayerInfo.this, AdminTableSelection.class);</span>
+<span class="nc" id="L49">                startActivity(intent);</span>
+<span class="nc" id="L50">                finish();</span>
+<span class="nc" id="L51">            }</span>
+        });
+
+<span class="nc" id="L54">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L55">        setContentView(R.layout.activity_player_info);</span>
+
+<span class="nc" id="L57">        listView = findViewById(R.id.listView);</span>
+<span class="nc" id="L58">        output = findViewById(R.id.textView3);</span>
+<span class="nc" id="L59">        newInfoButton = findViewById(R.id.floatingActionButton2);</span>
+
+        // Initialize the adapter with an empty list
+<span class="nc" id="L62">        adapter = new ArrayAdapter&lt;&gt;(</span>
+                this,
+                android.R.layout.simple_list_item_1, // predefined layout for list items
+                new ArrayList&lt;&gt;()
+        );
+
+<span class="nc" id="L68">        newInfoButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L71">                Intent intent = new Intent(PlayerInfo.this, PlayerInfoCreate.class);</span>
+<span class="nc" id="L72">                intent.putExtra(&quot;mode&quot;,getIntent().getStringExtra(&quot;mode&quot;));</span>
+                //intent.putExtra(&quot;object&quot;, selectedItem);
+<span class="nc" id="L74">                startActivity(intent);</span>
+<span class="nc" id="L75">            }</span>
+        });
+
+        // Set the adapter to the ListView
+<span class="nc" id="L79">        listView.setAdapter(adapter);</span>
+
+        // Set an OnItemClickListener for the ListView
+<span class="nc" id="L82">        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {</span>
+            @Override
+            public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+<span class="nc" id="L85">                String selectedItem = adapter.getItem(position);</span>
+<span class="nc" id="L86">                Intent intent = new Intent(PlayerInfo.this, PlayerInfoDetail.class);</span>
+<span class="nc" id="L87">                intent.putExtra(&quot;object&quot;, selectedItem);</span>
+<span class="nc" id="L88">                intent.putExtra(&quot;mode&quot;,getIntent().getStringExtra(&quot;mode&quot;));</span>
+<span class="nc" id="L89">                startActivity(intent);</span>
+<span class="nc" id="L90">            }</span>
+        });
+<span class="nc" id="L92">    }</span>
+
+    protected void onResume() {
+<span class="nc" id="L95">        super.onResume();</span>
+<span class="nc" id="L96">        adapter.clear();</span>
+<span class="nc" id="L97">        makeJsonArrayRequest();</span>
+<span class="nc" id="L98">    }</span>
+
+
+    private void makeJsonArrayRequest() {
+
+<span class="nc" id="L103">        CmdConvert cmdConvert = new CmdConvert(getIntent().getStringExtra(&quot;mode&quot;));</span>
+
+
+<span class="nc" id="L106">        JsonArrayRequest jsonArrReq = new JsonArrayRequest(</span>
+                Request.Method.GET,
+<span class="nc" id="L108">                cmdConvert.getCmd(&quot;LIST&quot;),</span>
+                null, // Pass null as the request body since it's a GET request
+<span class="nc" id="L110">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="nc" id="L113">                        output.setTextColor(Color.GREEN);</span>
+<span class="nc" id="L114">                        output.setText(response.toString());</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="nc" id="L117">                                output.setText(response.toString());</span>
+<span class="nc" id="L118">                                JSONObject jsonObject = response.getJSONObject(i);</span>
+<span class="nc" id="L119">                                adapter.add(jsonObject.toString());</span>
+<span class="nc" id="L120">                            } catch (JSONException e) {</span>
+<span class="nc" id="L121">                                e.printStackTrace();</span>
+<span class="nc" id="L122">                            }</span>
+                        }
+                        // Notify adapter of data changes
+<span class="nc" id="L125">                        adapter.notifyDataSetChanged();</span>
+<span class="nc" id="L126">                    }</span>
+                },
+<span class="nc" id="L128">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L131">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L132">                        output.setTextColor(Color.RED);</span>
+<span class="nc" id="L133">                        output.setText(error.toString());</span>
+<span class="nc" id="L134">                    }</span>
+                }
+
+
+        );
+        // Add the request to the request queue
+<span class="nc" id="L140">        RequestQueue requestQueue = Volley.newRequestQueue(PlayerInfo.this);</span>
+<span class="nc" id="L141">        requestQueue.add(jsonArrReq);</span>
+<span class="nc" id="L142">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

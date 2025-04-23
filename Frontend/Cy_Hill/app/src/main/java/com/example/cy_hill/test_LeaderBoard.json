@@ -1,0 +1,27 @@
+[
+  {
+    "playerName": "mmm",
+    "totalDonation": 9,
+    "team": "ag"
+  },
+  {
+    "playerName": "lll",
+    "totalDonation": 31,
+    "team": "lib"
+  },
+  {
+    "playerName": "aaa",
+    "totalDonation": 15,
+    "team": "xyz"
+  },
+  {
+    "playerName": "bbb",
+    "totalDonation": 22,
+    "team": "abc"
+  },
+  {
+    "playerName": "ccc",
+    "totalDonation": 45,
+    "team": "def"
+  }
+]

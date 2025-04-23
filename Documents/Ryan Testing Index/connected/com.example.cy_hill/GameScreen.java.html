@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">GameScreen.java</span></div><h1>GameScreen.java</h1><pre class="source lang-java linenums">/*package com.example.cy_hill;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.*;
+import com.example.cy_hill.place.Place;
+import com.example.cy_hill.place.PlaceRenderer;
+import com.example.cy_hill.place.PlacesReader;
+import com.google.maps.android.clustering.ClusterManager;
+
+import java.util.List;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class GameScreen extends AppCompatActivity {
+
+    private List&lt;Place&gt; places;
+    private Circle circle;
+    private GoogleMap mMap;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game_screen);
+
+        // Lazy initialization of places
+        places = new PlacesReader(this).read();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_fragment);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(googleMap -&gt; {
+                // Ensure all places are visible in the map
+                googleMap.setOnMapLoadedCallback(() -&gt; {
+                    LatLngBounds.Builder bounds = new LatLngBounds.Builder();
+                    for (Place place : places) {
+                        bounds.include(place.getLatLng());
+                    }
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20));
+                });
+
+                // Use clustering for markers
+                addClusteredMarkers(googleMap);
+
+                // Set custom info window adapter (commented out in original Kotlin code)
+                // googleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter(this));
+            });
+        }
+
+    }
+
+
+    //Adds markers to the map with clustering support.
+    private void addClusteredMarkers(GoogleMap googleMap) {
+        ClusterManager&lt;Place&gt; clusterManager = new ClusterManager&lt;&gt;(this, googleMap);
+        clusterManager.setRenderer(new PlaceRenderer(this, googleMap, clusterManager));
+
+        // Set custom info window adapter
+        clusterManager.getMarkerCollection().setInfoWindowAdapter(new MarkerInfoWindowAdapter(this));
+
+        // Add places to the ClusterManager
+        clusterManager.addItems(places);
+        clusterManager.cluster();
+
+        // Show a circle around each item when clicked
+        clusterManager.setOnClusterItemClickListener(item -&gt; {
+            addCircle(googleMap, item);
+            return false;
+        });
+
+        // Handle camera movement for marker alpha change
+        googleMap.setOnCameraMoveStartedListener(reason -&gt; {
+            for (Marker marker : clusterManager.getMarkerCollection().getMarkers()) {
+                marker.setAlpha(0.3f);
+            }
+            for (Marker marker : clusterManager.getClusterMarkerCollection().getMarkers()) {
+                marker.setAlpha(0.3f);
+            }
+        });
+
+        googleMap.setOnCameraIdleListener(() -&gt; {
+            for (Marker marker : clusterManager.getMarkerCollection().getMarkers()) {
+                marker.setAlpha(1.0f);
+            }
+            for (Marker marker : clusterManager.getClusterMarkerCollection().getMarkers()) {
+                marker.setAlpha(1.0f);
+            }
+            clusterManager.onCameraIdle();
+        });
+    }
+
+
+    //Adds a Circle around the provided Place item.
+
+    private void addCircle(GoogleMap googleMap, Place item) {
+        if (circle != null) {
+            circle.remove();
+        }
+        circle = googleMap.addCircle(new CircleOptions()
+                .center(item.getLatLng())
+                .radius(1000.0)
+                .fillColor(ContextCompat.getColor(this, R.color.colorPrimaryTranslucent))
+                .strokeColor(ContextCompat.getColor(this, R.color.colorPrimary)));
+    }
+
+    //Adds markers to the map without clustering.
+    private void addMarkers(GoogleMap googleMap) {
+        BitmapDescriptor bicycleIcon = BitmapHelper.vectorToBitmap(this, R.drawable.ic_directions_black_bike_24dp,
+                ContextCompat.getColor(this, R.color.colorPrimary));
+        for (Place place : places) {
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .title(place.getName())
+                    .position(place.getLatLng())
+                    .icon(bicycleIcon));
+            if (marker != null) {
+                marker.setTag(place);
+            }
+        }
+    }
+
+    public static final String TAG = GameScreen.class.getSimpleName();
+}*/
+
+
+
+package com.example.cy_hill;
+
+import static android.icu.number.Precision.increment;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+
+import android.app.ActivityOptions;
+import android.content.Intent;
+import android.os.Build;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.util.Log;
+import android.view.Window;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.StringRequest;
+
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.example.cy_hill.databinding.ActivityGameScreenBinding;
+import com.google.android.gms.maps.model.*;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.concurrent.atomic.AtomicReference;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+import org.json.JSONObject;
+
+
+/*
+* Google Maps API key for COMS 309 CyHill Game
+* AIzaSyBkrea0Q0zu700qjIhbt0rxkU0fq1iThwA
+*/
+
+<span class="nc" id="L198">public class GameScreen extends FragmentActivity implements OnMapReadyCallback {</span>
+
+<span class="nc" id="L200">    private String url = &quot;https://d3c5f2a9-e29b-4876-befd-4375ee29b80d.mock.pstmn.io&quot;;</span>
+    //private String url = &quot;http://coms-3090-059.class.las.iastate.edu:8080/7/donate/3/1&quot;;
+
+    private GoogleMap mMap;
+    private ActivityGameScreenBinding binding;
+    private Button donate;
+    private int coins;
+<span class="nc" id="L207">    private final int FINE_PERMISSION_CODE = 1;</span>
+    Location currentLocation;
+    FusedLocationProviderClient fusedLocationProviderClient;
+    private LatLng currLocation;
+
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+
+<span class="nc" id="L215">    private final long REFRESH_TIME = 1000; //How often the listener updates location, in milliseconds</span>
+<span class="nc" id="L216">    private final long REFRESH_DIST = 1; //Listener updates location, in meters</span>
+
+    private TextView messageView; // Use this TextView to display responses
+<span class="nc" id="L219">    private Handler handler = new Handler();</span>
+<span class="nc" id="L220">    private boolean mAutoIncrement = false;</span>
+    Runnable runnable;
+
+    View increaseView;
+<span class="nc" id="L224">    int DELAY = 1;</span>
+
+    private Circle circle;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L232">        super.onCreate(savedInstanceState);</span>
+
+<span class="nc" id="L234">        binding = ActivityGameScreenBinding.inflate(getLayoutInflater());</span>
+<span class="nc" id="L235">        setContentView(binding.getRoot());</span>
+
+<span class="nc" id="L237">        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);</span>
+<span class="nc" id="L238">        getLastLocation();</span>
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+<span class="nc" id="L241">        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);</span>
+<span class="nc" id="L242">        mapFragment.getMapAsync(this);</span>
+
+
+
+        //NAV_BAR LOGIC
+<span class="nc" id="L247">        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);</span>
+<span class="nc" id="L248">        bottomNavigationView.setSelectedItemId(R.id.item_3);</span>
+<span class="nc" id="L249">        AtomicReference&lt;Intent&gt; intent = new AtomicReference&lt;&gt;(new Intent());//I DO NOT LIKE WHAT GEMINI SUGGESTED FOR THIS</span>
+<span class="nc" id="L250">        bottomNavigationView.setOnNavigationItemSelectedListener(item -&gt; {</span>
+<span class="nc bnc" id="L251" title="All 6 branches missed.">            switch (item.getItemId()) {</span>
+                case R.id.item_1:
+                    // Handle item 1 click
+<span class="nc" id="L254">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED ABOUT&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L256">                    intent.set(new Intent(this, About.class));</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L258">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L259">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L260">                    } else {</span>
+<span class="nc" id="L261">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L263">                    return true;</span>
+
+                case R.id.item_2:
+                    // Handle item 2 click
+<span class="nc" id="L267">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED HILLS&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L269">                    intent.set(new Intent(this, HillProgress.class));</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L271">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L272">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L273">                    } else {</span>
+<span class="nc" id="L274">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L276">                    return true;</span>
+
+                case R.id.item_3:
+                    // Handle item 3 click
+<span class="nc" id="L280">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED DONATE&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L282">                    intent.set(new Intent(this, GameScreen.class));</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L284">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L285">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L286">                    } else {</span>
+<span class="nc" id="L287">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L289">                    return true;</span>
+
+                case R.id.item_4:
+                    // Handle item 4 click
+<span class="nc" id="L293">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED NEWS&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L295">                    intent.set(new Intent(this, NewsScreeen.class));</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L297">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L298">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L299">                    } else {</span>
+<span class="nc" id="L300">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L302">                    return true;</span>
+
+                case R.id.item_5:
+                    // Handle item 5 click
+<span class="nc" id="L306">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED PROFILE&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L308">                    intent.set(new Intent(this, Profile.class));</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L310">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L311">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L312">                    } else {</span>
+<span class="nc" id="L313">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L315">                    return true;</span>
+
+                default:
+<span class="nc" id="L318">                    return false;</span>
+            }
+        });
+        //END OF NAV_BAR LOGIC
+
+
+<span class="nc" id="L324">        coins = 0;</span>
+<span class="nc" id="L325">        donate = findViewById(R.id.donatebtn);</span>
+<span class="nc" id="L326">        donate.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L329">                coins++;</span>
+                /*@Override
+                public void onClick(View view) {
+                postRequest(coins);*/
+<span class="nc" id="L333">            }</span>
+        });
+
+<span class="nc" id="L336">    }</span>
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+<span class="nc" id="L341">        super.onRequestPermissionsResult(requestCode, permissions, grantResults);</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">        if (requestCode == FINE_PERMISSION_CODE) {</span>
+<span class="nc bnc" id="L343" title="All 4 branches missed.">            if (grantResults.length &gt; 0 &amp;&amp; grantResults[0] == PackageManager.PERMISSION_GRANTED) {</span>
+<span class="nc" id="L344">                Toast.makeText(GameScreen.this, &quot;Location was found&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L345">                getLastLocation();</span>
+            } else {
+<span class="nc" id="L347">                Toast.makeText(GameScreen.this, &quot;Location permission denied&quot;, Toast.LENGTH_SHORT).show();</span>
+            }
+        }
+<span class="nc" id="L350">    }</span>
+
+    private void getLastLocation() {
+<span class="nc bnc" id="L353" title="All 4 branches missed.">        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &amp;&amp; ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {</span>
+<span class="nc" id="L354">            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_PERMISSION_CODE);</span>
+<span class="nc" id="L355">            return;</span>
+        }
+<span class="nc" id="L357">        Task&lt;Location&gt; task = fusedLocationProviderClient.getLastLocation();</span>
+<span class="nc" id="L358">        task.addOnSuccessListener(new OnSuccessListener&lt;Location&gt;() {</span>
+            @Override
+            public void onSuccess(Location location) {
+<span class="nc bnc" id="L361" title="All 2 branches missed.">                if (location != null){</span>
+<span class="nc" id="L362">                    currentLocation = location;</span>
+                    //Toast.makeText(GameScreen.this, &quot;Location set&quot;, Toast.LENGTH_SHORT).show();
+<span class="nc" id="L364">                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);</span>
+<span class="nc" id="L365">                    mapFragment.getMapAsync(GameScreen.this);</span>
+                }
+<span class="nc" id="L367">            }</span>
+        });
+<span class="nc" id="L369">    }</span>
+
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Ames, Iowa.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+<span class="nc" id="L383">        mMap = googleMap;</span>
+
+<span class="nc" id="L385">        LatLng isu = new LatLng(42.0267, -93.6465);</span>
+<span class="nc" id="L386">        Marker MainCampus = mMap.addMarker(</span>
+                new MarkerOptions()
+<span class="nc" id="L388">                        .position(isu)</span>
+<span class="nc" id="L389">                        .title(&quot;Central Campus&quot;)</span>
+<span class="nc" id="L390">                        .snippet(&quot;Coins: &quot; + coins)</span>
+<span class="nc" id="L391">                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hill_icon)));</span>
+
+<span class="nc" id="L393">        LatLng engineering = new LatLng(42.02842, -93.65096);</span>
+<span class="nc" id="L394">        Marker CollegeOfEngineering = mMap.addMarker(</span>
+                new MarkerOptions()
+<span class="nc" id="L396">                        .position(engineering)</span>
+<span class="nc" id="L397">                        .title(&quot;College of Engineering&quot;)</span>
+<span class="nc" id="L398">                        .snippet(&quot;Coins: &quot; + coins)</span>
+<span class="nc" id="L399">                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hill_icon)));</span>
+
+<span class="nc" id="L401">        LatLng design = new LatLng(42.02863297013443, -93.65313672195934);</span>
+<span class="nc" id="L402">        Marker CollegeOfDesign = mMap.addMarker(</span>
+                new MarkerOptions()
+<span class="nc" id="L404">                        .position(design)</span>
+<span class="nc" id="L405">                        .title(&quot;College of Design&quot;)</span>
+<span class="nc" id="L406">                        .snippet(&quot;Coins: &quot; + coins)</span>
+<span class="nc" id="L407">                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hill_icon)));</span>
+
+<span class="nc" id="L409">        LatLng agriculture = new LatLng(42.02677186227752, -93.64460530795058);</span>
+<span class="nc" id="L410">        Marker CollegeOfAgriculture = mMap.addMarker(</span>
+                new MarkerOptions()
+<span class="nc" id="L412">                        .position(agriculture)</span>
+<span class="nc" id="L413">                        .title(&quot;College of Agriculture&quot;)</span>
+<span class="nc" id="L414">                        .snippet(&quot;Coins: &quot; + coins)</span>
+<span class="nc" id="L415">                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hill_icon)));</span>
+
+<span class="nc" id="L417">        LatLng business = new LatLng(42.02552373216546, -93.6444247928389);</span>
+<span class="nc" id="L418">        Marker CollegeOfBusiness = mMap.addMarker(</span>
+                new MarkerOptions()
+<span class="nc" id="L420">                        .position(business)</span>
+<span class="nc" id="L421">                        .title(&quot;College of Business&quot;)</span>
+<span class="nc" id="L422">                        .snippet(&quot;Coins: &quot; + coins)</span>
+<span class="nc" id="L423">                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hill_icon)));</span>
+
+<span class="nc" id="L425">        LatLng humansci = new LatLng(42.029802507303934, -93.6450285095151);</span>
+<span class="nc" id="L426">        Marker CollegeOfHumanSciences = mMap.addMarker(</span>
+                new MarkerOptions()
+<span class="nc" id="L428">                        .position(humansci)</span>
+<span class="nc" id="L429">                        .title(&quot;College of Human Sciences&quot;)</span>
+<span class="nc" id="L430">                        .snippet(&quot;Coins: &quot; + coins)</span>
+<span class="nc" id="L431">                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.hill_icon)));</span>
+
+<span class="nc bnc" id="L433" title="All 2 branches missed.">        if (currLocation != null) {</span>
+<span class="nc" id="L434">            currLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());</span>
+        }
+        else {
+<span class="nc" id="L437">            currLocation = new LatLng(42.0267, -93.6465);</span>
+        }
+
+<span class="nc" id="L440">        locationListener = new LocationListener() {</span>
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+<span class="nc" id="L443">                currLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());</span>
+<span class="nc" id="L444">                mMap.addMarker(new MarkerOptions().position(currLocation).title(&quot;My Location&quot;));</span>
+<span class="nc" id="L445">            }</span>
+        };
+<span class="nc" id="L447">        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currLocation, 17));</span>
+
+<span class="nc" id="L449">        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);</span>
+        try {
+<span class="nc" id="L451">            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, REFRESH_TIME, REFRESH_DIST, locationListener);</span>
+<span class="nc" id="L452">        } catch (SecurityException e) {</span>
+<span class="nc" id="L453">            e.printStackTrace();</span>
+<span class="nc" id="L454">        }</span>
+<span class="nc" id="L455">    }</span>
+
+    //Adds a Circle around the provided Place item.
+
+
+    private void postRequest(int coins) {
+
+<span class="nc" id="L462">        Intent intent = getIntent();</span>
+<span class="nc" id="L463">        String object = intent.getStringExtra(&quot;object&quot;);</span>
+
+<span class="nc" id="L465">        CmdConvert cmdConvert = new CmdConvert(getIntent().getStringExtra(&quot;mode&quot;));</span>
+
+        // Create the JSON object to send in the POST request
+<span class="nc" id="L468">        JSONObject postBody = new JSONObject();</span>
+        try {
+<span class="nc" id="L470">            postBody.put(&quot;coins&quot;, coins);</span>
+<span class="nc" id="L471">            Log.d(&quot;POST BODY&quot;,postBody.toString());</span>
+<span class="nc" id="L472">        } catch (Exception e) {</span>
+<span class="nc" id="L473">            e.printStackTrace();</span>
+<span class="nc" id="L474">        }</span>
+
+        // Use StringRequest if the server expects form-urlencoded data
+<span class="nc" id="L477">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.POST,
+<span class="nc" id="L479">                cmdConvert.getCmd(&quot;POST&quot;),</span>
+                postBody,
+<span class="nc" id="L481">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L484">                        messageView.setTextColor(Color.BLACK);</span>
+<span class="nc" id="L485">                        messageView.setText(response.toString());</span>
+<span class="nc" id="L486">                    }</span>
+                },
+<span class="nc" id="L488">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L491">                        messageView.setTextColor(Color.RED);</span>
+<span class="nc" id="L492">                        messageView.setText(error.getMessage());</span>
+<span class="nc" id="L493">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L494">                    }</span>
+                }
+        );
+        // **Add this line to add the request to the request queue**
+<span class="nc" id="L498">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="nc" id="L499">        requestQueue.add(request);</span>
+<span class="nc" id="L500">    }</span>
+
+    public void progressBar(){
+
+<span class="nc" id="L504">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

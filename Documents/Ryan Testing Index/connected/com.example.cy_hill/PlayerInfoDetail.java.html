@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerInfoDetail.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">PlayerInfoDetail.java</span></div><h1>PlayerInfoDetail.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
+
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.example.cy_hill.databinding.ActivityPlayerInfoDetailBinding;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+<span class="nc" id="L40">public class PlayerInfoDetail extends AppCompatActivity {</span>
+
+    private AppBarConfiguration appBarConfiguration;
+    private ActivityPlayerInfoDetailBinding binding;
+
+
+    private EditText nameEdit1;
+    private EditText nameEdit2;
+    private EditText nameEdit3;
+    private EditText nameEdit4;
+    private EditText nameEdit5;
+    private Button createButton;
+    private Button deleteButton;
+    private TextView messageView; // Use this TextView to display responses
+    private Switch adminSwitch;
+    private RequestQueue requestQueue;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+<span class="nc" id="L61">        CmdConvert cmdConvert = new CmdConvert(getIntent().getStringExtra(&quot;mode&quot;));</span>
+
+<span class="nc" id="L63">        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {</span>
+            @Override
+            public void handleOnBackPressed() {
+                // Make sure to use the correct context here
+<span class="nc" id="L67">                Intent intent = new Intent(PlayerInfoDetail.this, PlayerInfo.class);</span>
+<span class="nc" id="L68">                startActivity(intent);</span>
+<span class="nc" id="L69">                finish(); // Close the current activity</span>
+<span class="nc" id="L70">            }</span>
+        });
+<span class="nc" id="L72">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L73">        setContentView(R.layout.activity_player_info_detail);</span>
+
+
+        //This whole block is just a major pain in the ass to get the keys of the JSON object
+<span class="nc" id="L77">        Intent intent = getIntent();</span>
+<span class="nc" id="L78">        String object = intent.getStringExtra(&quot;object&quot;);</span>
+<span class="nc" id="L79">        Log.d(&quot;Server Response&quot;,object);</span>
+<span class="nc" id="L80">        ArrayList&lt;String&gt; keyList = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L82">            JSONObject JSON = new JSONObject(object);</span>
+<span class="nc" id="L83">            Iterator&lt;String&gt; keys = JSON.keys();</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            while (keys.hasNext()) {</span>
+<span class="nc" id="L85">                String key = keys.next();</span>
+<span class="nc" id="L86">                keyList.add(key);</span>
+<span class="nc" id="L87">                Log.d(&quot;Server Response Key&quot;, key); // Logs each key</span>
+<span class="nc" id="L88">            }</span>
+<span class="nc" id="L89">        } catch (JSONException e) {</span>
+<span class="nc" id="L90">            throw new RuntimeException(e);</span>
+<span class="nc" id="L91">        }</span>
+        //This whole block is just a major pain in the ass to get the keys of the JSON object
+
+
+        //Log.d(&quot;Server Response&quot;,JSON.keys());
+
+
+
+<span class="nc" id="L99">        nameEdit1 = findViewById(R.id.editText1);</span>
+<span class="nc" id="L100">        nameEdit2 = findViewById(R.id.editText2);</span>
+<span class="nc" id="L101">        nameEdit3 = findViewById(R.id.editText3);</span>
+<span class="nc" id="L102">        nameEdit4 = findViewById(R.id.editText4);</span>
+<span class="nc" id="L103">        nameEdit5 = findViewById(R.id.editText5);</span>
+
+<span class="nc" id="L105">        messageView = findViewById(R.id.textView5);</span>
+
+<span class="nc" id="L107">        createButton= findViewById(R.id.button4);</span>
+<span class="nc" id="L108">        deleteButton = findViewById(R.id.deleteButton);</span>
+        //String userid = &quot;&quot;;
+
+<span class="nc" id="L111">        adminSwitch = findViewById(R.id.switch1);</span>
+
+
+        try {
+
+            //ALL OF THIS JUST FILLS THE HINTS FOR THE TEXT FIELDS, IT SUCKS TO THINK ABOUT
+<span class="nc" id="L117">            JSONObject person = new JSONObject(object);</span>
+<span class="nc" id="L118">            String userid = person.getString(&quot;id&quot;);</span>
+<span class="nc" id="L119">            EditText[] fields = new EditText[]{nameEdit1, nameEdit2, nameEdit3, nameEdit4,nameEdit5};</span>
+<span class="nc" id="L120">            int blank = fields.length-keyList.size();</span>
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            for(int i = 0; i &lt; Math.min(keyList.size(), fields.length); i++){</span>
+                // Set the hint text for name
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                if (person.getString(keyList.get(i)).isEmpty()){</span>
+<span class="nc" id="L125">                    fields[i].setHint(keyList.get(i));</span>
+                } else {
+<span class="nc" id="L127">                    fields[i].setHint(keyList.get(i) + &quot; : &quot; + person.getString(keyList.get(i)));</span>
+                }
+            }
+
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            for(int i = 0; i &lt; blank; i++){</span>
+<span class="nc" id="L132">                fields[keyList.size() + i].setVisibility(View.GONE);</span>
+            }
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if(getIntent().getStringExtra(&quot;mode&quot;).equals(&quot;player_info&quot;)){</span>
+<span class="nc" id="L136">                adminSwitch.setVisibility(View.VISIBLE);</span>
+<span class="nc bnc" id="L137" title="All 4 branches missed.">                if(getIntent().getStringExtra(&quot;mode&quot;).equals(&quot;player_info&quot;) &amp;&amp; !person.getBoolean(&quot;isAdmin&quot;)) {</span>
+<span class="nc" id="L138">                    adminSwitch.setChecked(false);</span>
+                } else {
+<span class="nc" id="L140">                    adminSwitch.setChecked(true);</span>
+                }
+            }else{
+<span class="nc" id="L143">                adminSwitch.setVisibility(View.GONE);</span>
+            }
+            //ALL OF THIS JUST FILLS THE HINTS FOR THE TEXT FIELDS, IT SUCKS TO THINK ABOUT
+
+
+
+
+<span class="nc" id="L150">            createButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View view) {
+
+
+<span class="nc" id="L155">                    ArrayList&lt;String&gt; entry = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                    for(int i = 0; i &lt; Math.min(keyList.size(), fields.length); i++){</span>
+<span class="nc" id="L157">                            entry.add(fields[i].getText().toString());</span>
+                    }
+<span class="nc" id="L159">                    JSONObject postBody = new JSONObject();</span>
+                    try {
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                        for(int i = 0; i &lt; keyList.size(); i++){</span>
+<span class="nc" id="L162">                            postBody.put(keyList.get(i),entry.get(i));</span>
+                        }
+<span class="nc" id="L164">                        Log.d(&quot;Server Response&quot;,postBody.toString());</span>
+<span class="nc" id="L165">                    } catch (Exception e) {</span>
+<span class="nc" id="L166">                        e.printStackTrace();</span>
+<span class="nc" id="L167">                    }</span>
+
+                    // Use StringRequest if the server expects form-urlencoded data
+<span class="nc" id="L170">                    JsonObjectRequest jsonArrReq = new JsonObjectRequest(</span>
+                            Request.Method.PUT,
+<span class="nc" id="L172">                          cmdConvert.getCmd(&quot;PUT&quot;, Integer.parseInt(userid)),</span>
+                            postBody,
+<span class="nc" id="L174">                            new Response.Listener&lt;JSONObject&gt;() {</span>
+                                @Override
+                                public void onResponse(JSONObject response) {
+<span class="nc" id="L177">                                    messageView.setTextColor(Color.GREEN);</span>
+<span class="nc" id="L178">                                    messageView.setText(response.toString());</span>
+<span class="nc" id="L179">                                }</span>
+                            },
+<span class="nc" id="L181">                            new Response.ErrorListener() {</span>
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L184">                                    messageView.setTextColor(Color.RED);</span>
+<span class="nc" id="L185">                                    messageView.setText(error.getMessage());</span>
+<span class="nc" id="L186">                                }</span>
+                            }
+                    );
+                    // **Add this line to add the request to the request queue**
+<span class="nc" id="L190">                    RequestQueue requestQueue = Volley.newRequestQueue(PlayerInfoDetail.this);</span>
+<span class="nc" id="L191">                    requestQueue.add(jsonArrReq);</span>
+
+
+<span class="nc" id="L194">                }</span>
+            });
+
+
+
+
+
+
+
+<span class="nc" id="L203">            deleteButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View view) {
+                    //String url = &quot;http://coms-3090-059.class.las.iastate.edu:8080/delete/&quot; + userid;
+
+<span class="nc" id="L208">                    JsonArrayRequest jsonArrReq = new JsonArrayRequest(</span>
+                            Request.Method.DELETE,
+<span class="nc" id="L210">                            cmdConvert.getCmd(&quot;DEL&quot;, Integer.parseInt(userid)),</span>
+                            null, // Pass null as the request body since it's a GET request
+<span class="nc" id="L212">                            new Response.Listener&lt;JSONArray&gt;() {</span>
+                                @Override
+                                public void onResponse(JSONArray response) {
+<span class="nc" id="L215">                                    messageView.setTextColor(Color.GREEN);</span>
+<span class="nc" id="L216">                                    messageView.setText(&quot;Successfully Deleted&quot;);</span>
+<span class="nc" id="L217">                                }</span>
+                            },
+<span class="nc" id="L219">                            new Response.ErrorListener() {</span>
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L222">                                    messageView.setTextColor(Color.RED);</span>
+                                    //messageView.setText(error.toString());
+<span class="nc" id="L224">                                    Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L225">                                }</span>
+                    });
+                    // **Add this line to add the request to the request queue**
+<span class="nc" id="L228">                    RequestQueue requestQueue = Volley.newRequestQueue(PlayerInfoDetail.this);</span>
+<span class="nc" id="L229">                    requestQueue.add(jsonArrReq);</span>
+
+//                    Intent intent = new Intent(PlayerInfoDetail.this, PlayerInfo.class);
+//                    startActivity(intent);
+//                    finish(); // Close the current activity
+<span class="nc" id="L234">                }</span>
+            });
+<span class="nc" id="L236">        } catch (JSONException e) {</span>
+<span class="nc" id="L237">            throw new RuntimeException(e);</span>
+<span class="nc" id="L238">        }</span>
+<span class="nc" id="L239">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

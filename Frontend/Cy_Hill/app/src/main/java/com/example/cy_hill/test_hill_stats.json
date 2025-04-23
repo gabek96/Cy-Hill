@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Town Hill",
+    "leader": "Ryan ",
+    "totalPoints": "100",
+    "progress": "25",
+    "agPoints": "10",
+    "busPoints": "20",
+    "desPoints": "30",
+    "engPoints": "40",
+    "humPoints": "50",
+    "libPoints": "60",
+    "vetsPoints": "70",
+    "gradPoints": "80",
+    "eduPoints": "90"
+  },
+  {
+    "name": "Hoover Hill",
+    "leader": "Ryan ",
+    "totalPoints": "1000",
+    "progress": "25",
+    "agPoints": "10",
+    "busPoints": "20",
+    "desPoints": "30",
+    "engPoints": "40",
+    "humPoints": "50",
+    "libPoints": "60",
+    "vetsPoints": "70",
+    "gradPoints": "80",
+    "eduPoints": "90"
+  }
+]

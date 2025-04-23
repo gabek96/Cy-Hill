@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyRecyclerViewAdapterNewsScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">MyRecyclerViewAdapterNewsScreen.java</span></div><h1>MyRecyclerViewAdapterNewsScreen.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class MyRecyclerViewAdapterNewsScreen extends RecyclerView.Adapter&lt;MyRecyclerViewAdapterNewsScreen.ViewHolder&gt; {
+
+    private List&lt;News&gt; mData;
+    private LayoutInflater mInflater;
+    private ItemClickListener mClickListener;
+
+    // data is passed into the constructor
+<span class="nc" id="L24">    MyRecyclerViewAdapterNewsScreen(Context context, List&lt;News&gt; data) {</span>
+<span class="nc" id="L25">        this.mInflater = LayoutInflater.from(context);</span>
+<span class="nc" id="L26">        this.mData = data;</span>
+<span class="nc" id="L27">    }</span>
+
+    // inflates the row layout from xml when needed
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L33">        View view = mInflater.inflate(R.layout.news_row, parent, false);</span>
+<span class="nc" id="L34">        return new ViewHolder(view);</span>
+    }
+
+    // binds the data to the TextView and handles menu actions
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+<span class="nc" id="L41">       News item = mData.get(position);</span>
+<span class="nc" id="L42">       holder.textContent.setText(item.getStatement());</span>
+<span class="nc" id="L43">       holder.textDate.setText(item.getTimestamp());</span>
+<span class="nc" id="L44">       holder.imageView.setImageResource(item.getGraphic());</span>
+
+
+<span class="nc" id="L47">    }</span>
+
+    // total number of rows
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L52">        return mData.size();</span>
+    }
+
+    // stores and recycles views as they are scrolled off screen
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView textContent;
+        TextView textDate;
+        ImageView imageView;
+
+<span class="nc" id="L61">        ViewHolder(View itemView) {</span>
+<span class="nc" id="L62">            super(itemView);</span>
+<span class="nc" id="L63">            textContent = itemView.findViewById(R.id.textContent);</span>
+<span class="nc" id="L64">            textDate = itemView.findViewById(R.id.textDate);</span>
+<span class="nc" id="L65">            imageView = itemView.findViewById(R.id.imageView);</span>
+<span class="nc" id="L66">            itemView.setOnClickListener(this);</span>
+<span class="nc" id="L67">        }</span>
+
+        @Override
+        public void onClick(View view) {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());</span>
+<span class="nc" id="L72">        }</span>
+    }
+
+    // convenience method for getting data at click position
+    News getItem(int id) {
+<span class="nc" id="L77">        return mData.get(id);</span>
+    }
+
+    // allows clicks events to be caught
+    void setClickListener(ItemClickListener itemClickListener) {
+<span class="nc" id="L82">        this.mClickListener = itemClickListener;</span>
+<span class="nc" id="L83">    }</span>
+
+    // parent activity will implement this method to respond to click events
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

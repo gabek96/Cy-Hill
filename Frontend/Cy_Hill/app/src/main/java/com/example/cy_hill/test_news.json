@@ -1,0 +1,32 @@
+[
+  {
+    "statement":"New Limited event hill will be coming out this Tuesday!",
+    "graphic":"notify",
+    "timestamp":"Mon 13/1/98"
+  },
+  {
+    "statement":"Design has failed to capture any hills in 3 days, better get a move on!",
+    "graphic":"skull",
+    "timestamp":"Tue 4/5/67"
+  },
+  {
+    "statement":"Coover hall has been captured by Engineering!",
+    "graphic":"trophy",
+    "timestamp":"Sat 7/14/97"
+  },
+  {
+    "statement":"Carver Hall is about to be completed, rush to contribute now!",
+    "graphic":"run",
+    "timestamp":"Sat 7/14/97"
+  },
+  {
+    "statement":"A new Hill has started at Molecular Biology!",
+    "graphic":"flag",
+    "timestamp":"Sat 7/14/97"
+  },
+  {
+    "statement":"Vet Med is on a role! They have captured a hill everyday this week, good work!",
+    "graphic":"taunt",
+    "timestamp":"Sat 7/14/97"
+  }
+]

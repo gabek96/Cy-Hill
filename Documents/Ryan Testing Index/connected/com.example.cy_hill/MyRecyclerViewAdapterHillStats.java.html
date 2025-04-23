@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyRecyclerViewAdapterHillStats.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">MyRecyclerViewAdapterHillStats.java</span></div><h1>MyRecyclerViewAdapterHillStats.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class MyRecyclerViewAdapterHillStats extends RecyclerView.Adapter&lt;MyRecyclerViewAdapterHillStats.ViewHolder&gt; {
+
+    private List&lt;Hill&gt; mData;
+    private LayoutInflater mInflater;
+    private ItemClickListener mClickListener;
+
+    // data is passed into the constructor
+<span class="nc" id="L24">    MyRecyclerViewAdapterHillStats(Context context, List&lt;Hill&gt; data) {</span>
+<span class="nc" id="L25">        this.mInflater = LayoutInflater.from(context);</span>
+<span class="nc" id="L26">        this.mData = data;</span>
+<span class="nc" id="L27">    }</span>
+
+    // inflates the row layout from xml when needed
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L33">        View view = mInflater.inflate(R.layout.recyclerview_row, parent, false);</span>
+<span class="nc" id="L34">        return new ViewHolder(view);</span>
+    }
+
+    // binds the data to the TextView and handles menu actions
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+<span class="nc" id="L41">        Hill item = mData.get(Math.max(0, position));</span>
+
+<span class="nc" id="L43">        holder.textHillName.setText(item.getName());</span>
+<span class="nc" id="L44">        holder.progressBar.setProgress(item.getProgress());</span>
+<span class="nc" id="L45">        Log.d(&quot;TOTAL PROGRESS&quot;, String.valueOf(item.getProgress()));</span>
+<span class="nc" id="L46">        holder.textCurrentLeader.setText(&quot;Leader: &quot; + item.getLeader());</span>
+<span class="nc" id="L47">        holder.textTimeLeft.setText(item.getAllPoints() + &quot;/&quot; + item.getGoal());</span>
+
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (item.isExpanded()) {</span>
+<span class="nc" id="L50">            holder.RelativeLayout.setVisibility(View.VISIBLE);</span>
+        } else {
+<span class="nc" id="L52">            holder.RelativeLayout.setVisibility(View.GONE);</span>
+        }
+
+<span class="nc" id="L55">        holder.vetProgressBar.setProgress(item.getVetPoints());</span>
+<span class="nc" id="L56">        holder.gradProgressBar.setProgress(item.getGradPoints());</span>
+<span class="nc" id="L57">        holder.engProgressBar.setProgress(item.getEngPoints());</span>
+<span class="nc" id="L58">        holder.agProgressBar.setProgress(item.getAgPoints());</span>
+<span class="nc" id="L59">        holder.busProgressBar.setProgress(item.getBusPoints());</span>
+<span class="nc" id="L60">        holder.desProgressBar.setProgress(item.getDesPoints());</span>
+<span class="nc" id="L61">        holder.humProgressBar.setProgress(item.getHumPoints());</span>
+<span class="nc" id="L62">        holder.libProgressBar.setProgress(item.getLibPoints());</span>
+<span class="nc" id="L63">        holder.eduProgressBar.setProgress(item.getEduPoints());</span>
+
+
+
+
+<span class="nc" id="L68">    }</span>
+
+    // total number of rows
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L73">        return mData.size();</span>
+    }
+
+    // stores and recycles views as they are scrolled off screen
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView textHillName;
+        TextView textTimeLeft;
+        TextView textCurrentLeader;
+        ProgressBar progressBar;
+
+        RelativeLayout RelativeLayout;
+        ProgressBar vetProgressBar;
+        ProgressBar gradProgressBar;
+        ProgressBar engProgressBar;
+        ProgressBar agProgressBar;
+        ProgressBar busProgressBar;
+        ProgressBar desProgressBar;
+        ProgressBar humProgressBar;
+        ProgressBar libProgressBar;
+        ProgressBar eduProgressBar;
+
+
+<span class="nc" id="L95">        ViewHolder(View itemView) {</span>
+<span class="nc" id="L96">            super(itemView);</span>
+<span class="nc" id="L97">            textHillName = itemView.findViewById(R.id.textHillName);</span>
+<span class="nc" id="L98">            textTimeLeft = itemView.findViewById(R.id.textTimeLeft);</span>
+<span class="nc" id="L99">            textCurrentLeader = itemView.findViewById(R.id.textCurrentLeader);</span>
+<span class="nc" id="L100">            progressBar = itemView.findViewById(R.id.progressBar);</span>
+
+<span class="nc" id="L102">            RelativeLayout = itemView.findViewById(R.id.progressBarLayout);</span>
+<span class="nc" id="L103">            vetProgressBar = itemView.findViewById(R.id.vetProgressBar);</span>
+<span class="nc" id="L104">            gradProgressBar = itemView.findViewById(R.id.gradProgressBar);</span>
+<span class="nc" id="L105">            engProgressBar = itemView.findViewById(R.id.EngProgressBar);</span>
+<span class="nc" id="L106">            agProgressBar = itemView.findViewById(R.id.agProgressBar);</span>
+<span class="nc" id="L107">            busProgressBar = itemView.findViewById(R.id.busProgressBar);</span>
+<span class="nc" id="L108">            desProgressBar = itemView.findViewById(R.id.desProgressBar);</span>
+<span class="nc" id="L109">            humProgressBar = itemView.findViewById(R.id.humProgressBar);</span>
+<span class="nc" id="L110">            libProgressBar = itemView.findViewById(R.id.libProgressBar);</span>
+<span class="nc" id="L111">            eduProgressBar = itemView.findViewById(R.id.eduProgressBar);</span>
+<span class="nc" id="L112">            itemView.setOnClickListener(this);</span>
+<span class="nc" id="L113">        }</span>
+
+        @Override
+        public void onClick(View view) {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());</span>
+<span class="nc" id="L118">        }</span>
+    }
+
+    // convenience method for getting data at click position
+    Hill getItem(int id) {
+<span class="nc" id="L123">        return mData.get(id);</span>
+    }
+
+    // allows clicks events to be caught
+    void setClickListener(ItemClickListener itemClickListener) {
+<span class="nc" id="L128">        this.mClickListener = itemClickListener;</span>
+<span class="nc" id="L129">    }</span>
+
+    // parent activity will implement this method to respond to click events
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

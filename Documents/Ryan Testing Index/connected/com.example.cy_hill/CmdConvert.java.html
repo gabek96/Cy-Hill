@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CmdConvert.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">CmdConvert.java</span></div><h1>CmdConvert.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+public class CmdConvert {
+<span class="nc" id="L4">    private String mode = &quot;&quot;;</span>
+<span class="nc" id="L5">    private String url = &quot;http://coms-3090-059.class.las.iastate.edu:8080&quot;;</span>
+
+
+
+<span class="nc" id="L9">    public CmdConvert(String mode) {</span>
+<span class="nc" id="L10">        this.mode = mode;</span>
+<span class="nc" id="L11">    }</span>
+
+<span class="nc" id="L13">    public CmdConvert(String mode,String url) {</span>
+<span class="nc" id="L14">        this.mode = mode;</span>
+<span class="nc" id="L15">    }</span>
+
+    /**
+     * Retrieves the URL for performing specific actions (LIST, POST) based on the provided command and current mode.
+     *
+     * This method generates a URL by appending the appropriate path to a base URL, depending on the
+     * value of the command (`cmd`) and the current `mode`. The command can be one of the following:
+     * - &quot;LIST&quot;: Retrieves a list of all data
+     * - &quot;POST&quot;: Submits new data to the end
+     *
+     * The mode specifies the context, such as &quot;player_info&quot;, &quot;player_stats&quot;, or &quot;hill_stats&quot;, and determines
+     * the URL path that is appended to execute the desired action.
+     *
+     * @param cmd The command specifying the desired action (&quot;LIST&quot; to retrieve data, &quot;POST&quot; to submit data).
+     * @return The complete URL corresponding to the specified command and mode.
+     */
+
+
+    public String getCmd(String cmd){
+
+<span class="nc" id="L35">        String newCmd = url;</span>
+
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if(mode.equals(&quot;player_info&quot;)){</span>
+<span class="nc bnc" id="L38" title="All 3 branches missed.">            switch (cmd){</span>
+                case &quot;LIST&quot;:
+<span class="nc" id="L40">                    newCmd += &quot;/players&quot;;</span>
+<span class="nc" id="L41">                    break;</span>
+                case &quot;POST&quot;:
+<span class="nc" id="L43">                    newCmd += &quot;/player/create&quot;;</span>
+                    break;
+<span class="nc" id="L45">            }</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        }else if (mode.equals(&quot;player_stats&quot;)){</span>
+<span class="nc bnc" id="L47" title="All 3 branches missed.">            switch (cmd){</span>
+                case &quot;LIST&quot;:
+<span class="nc" id="L49">                    newCmd += &quot;/stats&quot;;</span>
+<span class="nc" id="L50">                    break;</span>
+                case &quot;POST&quot;:
+<span class="nc" id="L52">                    newCmd += &quot;/stats/apply&quot;;</span>
+                    break;
+<span class="nc" id="L54">            }</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        }else if (mode.equals(&quot;hill_stats&quot;)){</span>
+<span class="nc bnc" id="L56" title="All 3 branches missed.">            switch (cmd){</span>
+                case &quot;LIST&quot;:
+<span class="nc" id="L58">                    newCmd += &quot;/hill/Get&quot;;</span>
+<span class="nc" id="L59">                    break;</span>
+                case &quot;POST&quot;:
+<span class="nc" id="L61">                    newCmd += &quot;/hill/Create&quot;;</span>
+                    break;
+            }
+        }
+
+<span class="nc" id="L66">        return newCmd;</span>
+    }
+
+
+    /**
+     * Retrieves the URL for performing specific actions (GET, PUT, DELETE) on an element identified by its ID.
+     *
+     * This overloaded method generates a URL based on the provided command (`cmd`), the element's ID (`id`),
+     * and the current `mode`. The command can be one of the following:
+     * - &quot;GET&quot;: Retrieves the data for the specified element.
+     * - &quot;PUT&quot;: Updates the data for the specified element.
+     * - &quot;DEL&quot;: Deletes the specified element.
+     *
+     * The mode specifies the context, such as &quot;player_info&quot;, &quot;player_stats&quot;, or &quot;hill_stats&quot;, and determines
+     * the URL path that is appended to interact with the element.
+     *
+     * @param cmd The command specifying the desired action (&quot;GET&quot;, &quot;PUT&quot;, &quot;DEL&quot;).
+     * @param id The ID of the element to perform the action on.
+     * @return The complete URL corresponding to the specified command, mode, and element ID.
+     */
+
+    public String getCmd(String cmd, int id){
+
+<span class="nc" id="L89">        String newCmd = url;</span>
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if(mode.equals(&quot;player_info&quot;)){</span>
+<span class="nc bnc" id="L92" title="All 4 branches missed.">            switch (cmd){</span>
+                case &quot;GET&quot;:
+<span class="nc" id="L94">                    newCmd += (&quot;/player/&quot; + id);</span>
+<span class="nc" id="L95">                    break;</span>
+                case &quot;PUT&quot;:
+<span class="nc" id="L97">                    newCmd += (&quot;/player/&quot; + id);</span>
+<span class="nc" id="L98">                    break;</span>
+                case &quot;DEL&quot;:
+<span class="nc" id="L100">                    newCmd += (&quot;/delete/&quot; + id);</span>
+                    break;
+<span class="nc" id="L102">            }</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        }else if (mode.equals(&quot;player_stats&quot;)){</span>
+<span class="nc bnc" id="L104" title="All 4 branches missed.">            switch (cmd){</span>
+                case &quot;GET&quot;:
+<span class="nc" id="L106">                    newCmd += &quot;/TODO&quot;;</span>
+<span class="nc" id="L107">                    break;</span>
+                case &quot;PUT&quot;:
+<span class="nc" id="L109">                    newCmd += &quot;/change/&quot; + id;</span>
+<span class="nc" id="L110">                    break;</span>
+                case &quot;DEL&quot;:
+<span class="nc" id="L112">                    newCmd += &quot;/clear/&quot; + id;</span>
+                    break;
+<span class="nc" id="L114">            }</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        }else if (mode.equals(&quot;hill_stats&quot;)){</span>
+<span class="nc bnc" id="L116" title="All 4 branches missed.">            switch (cmd){</span>
+                case &quot;GET&quot;:
+<span class="nc" id="L118">                    newCmd += &quot;/hill/Get/&quot; + id;</span>
+<span class="nc" id="L119">                    break;</span>
+                case &quot;PUT&quot;:
+<span class="nc" id="L121">                    newCmd += &quot;/hill/Update/&quot; + id;</span>
+<span class="nc" id="L122">                    break;</span>
+                case &quot;DEL&quot;:
+<span class="nc" id="L124">                    newCmd += &quot;/hill/Delete/&quot; + id;</span>
+                    break;
+            }
+        }
+
+<span class="nc" id="L129">        return newCmd;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

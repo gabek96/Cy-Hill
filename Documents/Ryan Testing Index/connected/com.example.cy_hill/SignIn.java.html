@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SignIn.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">SignIn.java</span></div><h1>SignIn.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
+<span class="nc" id="L21">public class SignIn extends AppCompatActivity {</span>
+
+    //private String url = &quot;https://10.26.133.222:8080/users/create&quot;;
+    //private String url = &quot;https://efd52c8a-2478-40f7-9c6c-8cc5373f3268.mock.pstmn.io&quot;;
+<span class="nc" id="L25">    private String url = &quot;http://coms-3090-059.class.las.iastate.edu:8080/players&quot;;</span>
+
+    private EditText nameEditText;
+    private EditText passwordEditText;
+    private Button backButton;
+    private Button loginButton;
+    private TextView textView; // Use this TextView to display responses
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+
+<span class="nc" id="L37">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L38">        setContentView(R.layout.activity_sign_in);</span>
+
+<span class="nc" id="L40">        nameEditText = findViewById(R.id.editTextName);</span>
+<span class="nc" id="L41">        passwordEditText = findViewById(R.id.editTextTextPassword);</span>
+<span class="nc" id="L42">        backButton = findViewById(R.id.back_button);</span>
+<span class="nc" id="L43">        loginButton = findViewById(R.id.login_button);</span>
+<span class="nc" id="L44">        textView = findViewById(R.id.textView);</span>
+
+
+<span class="nc" id="L47">        loginButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L50">                startActivity(new Intent(SignIn.this, GameScreen.class));</span>
+<span class="nc" id="L51">            }</span>
+        });
+
+        /*loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String username = nameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+
+                // You might want to add validation for the input fields here
+
+                // Call the postRequest method to send data to the server
+                getRequest(username, password);
+            }
+        });*/
+<span class="nc" id="L66">    }</span>
+
+    private void getRequest(String username, String password) {
+
+        // Create the JSON object to send in the POST request
+<span class="nc" id="L71">        JSONObject postBody = new JSONObject();</span>
+        try {
+<span class="nc" id="L73">            postBody.put(&quot;name&quot;, username);</span>
+<span class="nc" id="L74">            postBody.put(&quot;password&quot;, password);</span>
+            //postBody.put(&quot;confirmPassword&quot;, confirmPassword);
+<span class="nc" id="L76">        } catch (Exception e) {</span>
+<span class="nc" id="L77">            e.printStackTrace();</span>
+<span class="nc" id="L78">        }</span>
+
+        // Use StringRequest if the server expects form-urlencoded data
+<span class="nc" id="L81">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                url,
+                postBody,
+<span class="nc" id="L85">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L88">                        textView.setBackgroundColor(Color.BLACK);</span>
+<span class="nc" id="L89">                        textView.setText(response.toString());</span>
+<span class="nc" id="L90">                    }</span>
+                },
+<span class="nc" id="L92">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L95">                        textView.setBackgroundColor(Color.RED);</span>
+<span class="nc" id="L96">                        textView.setText(error.getMessage());</span>
+<span class="nc" id="L97">                    }</span>
+                }
+        );
+        // **Add this line to add the request to the request queue**
+<span class="nc" id="L101">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="nc" id="L102">        requestQueue.add(request);</span>
+<span class="nc" id="L103">    }</span>
+
+
+    /*
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Make sure to use the correct context here
+                Intent intent = new Intent(PlayerInfo.this, AdminTableSelection.class);
+                startActivity(intent);
+                finish(); // Close the current activity
+            }
+        });
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_player_info);
+
+        // Initialize the adapter with an empty list
+        ArrayAdapter&lt;Object&gt; adapter = new ArrayAdapter&lt;&gt;(
+                this,
+                android.R.layout.simple_list_item_1, // predefined layout for list items
+                new ArrayList&lt;&gt;()
+        );
+
+        newInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayerInfo.this, PlayerInfoCreate.class);
+                startActivity(intent);
+                finish();
+                //Toast.makeText(PlayerInfo.this, &quot;YOU WANTA MAKE SOMTHING NEW&quot;, Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        // Set the adapter to the ListView
+        listView.setAdapter(adapter);
+
+        // Set an OnItemClickListener for the ListView
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+                // Get the item that was clicked (in this case, it's the name)
+                String selectedItem = adapter.getItem(position);
+
+                // Create an intent to start a new activity (e.g., PlayerDetailActivity)
+                Intent intent = new Intent(PlayerInfo.this, PlayerInfoDetail.class);
+                //WORK ON THIS TOMMOROW WITH SERVOR ON, ADD INTENT FOR WHEN CLICKUNG LIST ITEM
+
+                // Pass the selected item to the new activity (if needed)
+                intent.putExtra(&quot;playerName&quot;, selectedItem);
+
+                // Start the new activity
+                startActivity(intent);
+                //finish();
+
+                //Toast.makeText(PlayerInfo.this, &quot;YOU WANT TO EDIT&quot; + adapter.getItem(position), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // Initialize the request queue
+        requestQueue = Volley.newRequestQueue(this);
+
+        // Make the JSON array request
+        //makeJsonArrayRequest();
+    }
+
+    private void makeJsonArrayRequest() {
+        JsonArrayRequest jsonArrReq = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null, // Pass null as the request body since it's a GET request
+                new Response.Listener&lt;JSONArray&gt;() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        //Log.d(&quot;Volley Response&quot;, response.toString());
+                        textView.setTextColor(Color.GREEN);
+                        textView.setText(response.toString());
+                        // Parse the JSON array and add data to the adapter
+                        for (int i = 0; i &lt; response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                String name = jsonObject.getString(&quot;name&quot;);
+                                String password = jsonObject.getString(&quot;password&quot;);
+
+                                // Add name to the adapter (you can choose to add either name or email)
+                                //adapter.add(&quot;ID: &quot; + id + &quot;\nNAME: &quot; + name + &quot;\nEMAIL: &quot; + email +&quot;\nPASSWORD: &quot; + password);
+                                adapter.add(jsonObject.toString());
+                                //adapter.add(email);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        // Notify adapter of data changes
+                        adapter.notifyDataSetChanged();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.e(&quot;Volley Error&quot;, error.toString());
+                        textView.setTextColor(Color.RED);
+                        textView.setText(error.toString());
+                    }
+                }
+        );
+
+        // Add the request to the RequestQueue
+        requestQueue.add(jsonArrReq);
+    }*/
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>

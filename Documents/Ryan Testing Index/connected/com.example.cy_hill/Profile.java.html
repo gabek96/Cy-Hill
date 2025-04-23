@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Profile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.cy_hill</a> &gt; <span class="el_source">Profile.java</span></div><h1>Profile.java</h1><pre class="source lang-java linenums">package com.example.cy_hill;
+
+import android.app.ActivityOptions;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.util.Log;
+import android.view.Window;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.cy_hill.databinding.ActivityProfileBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+<span class="nc" id="L24">public class Profile extends AppCompatActivity {</span>
+    private ActivityProfileBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L29">        super.onCreate(savedInstanceState);</span>
+
+<span class="nc" id="L31">        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);</span>
+
+<span class="nc" id="L33">        setContentView(R.layout.activity_profile);</span>
+
+<span class="nc" id="L35">        Transition fade = new Fade();</span>
+<span class="nc" id="L36">        fade.excludeTarget(R.id.toolbar, true);</span>
+<span class="nc" id="L37">        fade.excludeTarget(R.id.bottom_navigation, true);</span>
+        //getWindow().setExitTransition(fade);
+<span class="nc" id="L39">        getWindow().setEnterTransition(fade);</span>
+<span class="nc" id="L40">        binding = ActivityProfileBinding.inflate(getLayoutInflater());</span>
+<span class="nc" id="L41">        setContentView(binding.getRoot());</span>
+
+
+        //NAV_BAR LOGIC
+<span class="nc" id="L45">        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);</span>
+<span class="nc" id="L46">        bottomNavigationView.setSelectedItemId(R.id.item_5);</span>
+<span class="nc" id="L47">        AtomicReference&lt;Intent&gt; intent = new AtomicReference&lt;&gt;(new Intent());//I DO NOT LIKE WHAT GEMINI SUGGESTED FOR THIS</span>
+<span class="nc" id="L48">        bottomNavigationView.setOnNavigationItemSelectedListener(item -&gt; {</span>
+<span class="nc bnc" id="L49" title="All 6 branches missed.">            switch (item.getItemId()) {</span>
+                case R.id.item_1:
+                    // Handle item 1 click
+<span class="nc" id="L52">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED ABOUT&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L54">                    intent.set(new Intent(this, About.class));</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L56">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L57">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L58">                    } else {</span>
+<span class="nc" id="L59">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L61">                    return true;</span>
+
+                case R.id.item_2:
+                    // Handle item 2 click
+<span class="nc" id="L65">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED HILLS&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L67">                    intent.set(new Intent(this, HillProgress.class));</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L69">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L70">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L71">                    } else {</span>
+<span class="nc" id="L72">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L74">                    return true;</span>
+
+                case R.id.item_3:
+                    // Handle item 3 click
+<span class="nc" id="L78">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED DONATE&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L80">                    intent.set(new Intent(this, GameScreen.class));</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L82">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L83">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L84">                    } else {</span>
+<span class="nc" id="L85">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L87">                    return true;</span>
+
+                case R.id.item_4:
+                    // Handle item 4 click
+<span class="nc" id="L91">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED NEWS&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L93">                    intent.set(new Intent(this, NewsScreeen.class));</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L95">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L96">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L97">                    } else {</span>
+<span class="nc" id="L98">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L100">                    return true;</span>
+
+                case R.id.item_5:
+                    // Handle item 5 click
+<span class="nc" id="L104">                    Log.d(&quot;CLICK&quot;, &quot;CLICKED PROFILE&quot;);</span>
+                    //overridePendingTransition(0,0);
+<span class="nc" id="L106">                    intent.set(new Intent(this, Profile.class));</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) {</span>
+<span class="nc" id="L108">                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);</span>
+<span class="nc" id="L109">                        startActivity(intent.get(), options.toBundle());</span>
+<span class="nc" id="L110">                    } else {</span>
+<span class="nc" id="L111">                        startActivity(intent.get());</span>
+                    }
+<span class="nc" id="L113">                    return true;</span>
+
+                default:
+<span class="nc" id="L116">                    return false;</span>
+            }
+        });
+        //END OF NAV_BAR LOGIC
+
+<span class="nc" id="L121">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.5.2</div></body></html>
