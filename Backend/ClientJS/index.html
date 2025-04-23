@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game News & Events</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #event-feed { margin-top: 20px; }
+        .event { margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Live Game News & Events</h1>
+
+    <div id="event-feed">
+        <h2>Event Feed</h2>
+        <!-- New events will be prepended here -->
+    </div>
+
+    <div>
+        <h2>Add New Event</h2>
+        <form id="event-form">
+            <label>
+                Event Type:
+                <input type="text" id="eventType" required placeholder="e.g., Score, Achievement">
+            </label>
+            <br><br>
+            <label>
+                Description:
+                <input type="text" id="description" required placeholder="e.g., Player scored a goal!">
+            </label>
+            <br><br>
+            <label>
+                Player Name:
+                <input type="text" id="playerName" required placeholder="e.g., Player1">
+            </label>
+            <br><br>
+            <button type="submit">Send Event via WebSocket</button>
+            <button type="button" id="postEventButton">Send Event via REST API</button>
+        </form>
+    </div>
+
+    <script>
+        // Set up WebSocket connection to the Spring Boot server
+        const socket = new SockJS('/game-websocket');
+        const stompClient = Stomp.over(socket);
+
+        // Connect to the WebSocket
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            // Subscribe to the game events topic
+            stompClient.subscribe('/topic/game-events', function (event) {
+                const gameEvent = JSON.parse(event.body);
+                displayEvent(gameEvent);
+            });
+        });
+
+        // Function to display a new event on the page
+        function displayEvent(event) {
+            const eventFeed = document.getElementById("event-feed");
+            const eventElement = document.createElement("div");
+            eventElement.classList.add("event");
+            eventElement.innerHTML = `<strong>${event.eventType}</strong>: ${event.description} by ${event.playerName} at ${event.timestamp}`;
+            eventFeed.prepend(eventElement);  // Add the new event to the top
+        }
+
+        // Form submission to send new event to the server via WebSocket
+        document.getElementById("event-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const eventType = document.getElementById("eventType").value;
+            const description = document.getElementById("description").value;
+            const playerName = document.getElementById("playerName").value;
+
+            const newEvent = {
+                eventType: eventType,
+                description: description,
+                playerName: playerName,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send the new event to the server
+            stompClient.send("/app/sendEvent", {}, JSON.stringify(newEvent));
+
+            // Clear form fields
+            document.getElementById("eventType").value = '';
+            document.getElementById("description").value = '';
+            document.getElementById("playerName").value = '';
+        });
+
+        // Button to send event via REST API
+        document.getElementById("postEventButton").addEventListener("click", function () {
+            const eventType = document.getElementById("eventType").value;
+            const description = document.getElementById("description").value;
+            const playerName = document.getElementById("playerName").value;
+
+            const newEvent = {
+                eventType: eventType,
+                description: description,
+                playerName: playerName,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send a POST request to the REST API
+            fetch('/api/news/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newEvent)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Event successfully uploaded via REST API");
+                } else {
+                    console.error("Failed to upload event");
+                }
+            })
+            .catch(error => console.error("Error uploading event:", error));
+
+            // Clear form fields
+            document.getElementById("eventType").value = '';
+            document.getElementById("description").value = '';
+            document.getElementById("playerName").value = '';
+        });
+    </script>
+</body>
+</html>
